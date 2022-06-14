@@ -1,4 +1,4 @@
-# Alexnet pytorch 
+# alexnet pytorch 
 
 :octocat: re-implementation of alexnet  
 
