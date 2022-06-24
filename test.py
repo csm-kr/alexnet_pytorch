@@ -10,7 +10,7 @@ from torch.nn import CrossEntropyLoss
 from alexnet import AlexNet
 
 
-def test_and_evaluate(epoch, vis, test_loader, model, criterion, opts):
+def test_and_evaluate(epoch, vis, test_loader, model, criterion, opts, is_load=True):
     """
     evaluate imagenet test data
     :param epoch: epoch for evaluating test dataset
@@ -18,6 +18,7 @@ def test_and_evaluate(epoch, vis, test_loader, model, criterion, opts):
     :param data_loader: test loader (torch.utils.DataLoader)
     :param model: model
     :param criterion: loss
+    :param is_load : bool is load
     :param opts: options from config
     :return: avg_loss and accuracy
 
@@ -27,18 +28,19 @@ def test_and_evaluate(epoch, vis, test_loader, model, criterion, opts):
     3. calculate loss and accuracy
     """
     # 1. load pth.tar
-    if isinstance(model, (torch.nn.parallel.distributed.DistributedDataParallel, torch.nn.DataParallel)):
-        checkpoint = torch.load(f=os.path.join(opts.save_path, opts.save_file_name) + '.{}.pth.tar'.format(epoch),
-                                map_location=torch.device('cuda:{}'.format(opts.rank)))
-        state_dict = checkpoint['model_state_dict']
-        model.load_state_dict(state_dict)
+    if is_load:
+        if isinstance(model, (torch.nn.parallel.distributed.DistributedDataParallel, torch.nn.DataParallel)):
+            checkpoint = torch.load(f=os.path.join(opts.save_path, opts.save_file_name) + '.{}.pth.tar'.format(epoch),
+                                    map_location=torch.device('cuda:{}'.format(opts.rank)))
+            state_dict = checkpoint['model_state_dict']
+            model.load_state_dict(state_dict)
 
-    else:
-        checkpoint = torch.load(f=os.path.join(opts.save_path, opts.save_file_name) + '.{}.pth.tar'.format(epoch),
-                                map_location=torch.device('cuda:{}'.format(opts.rank)))
-        state_dict = checkpoint['model_state_dict']
-        state_dict = {k.replace('module.', ''): v for (k, v) in state_dict.items()}
-        model.load_state_dict(state_dict)
+        else:
+            checkpoint = torch.load(f=os.path.join(opts.save_path, opts.save_file_name) + '.{}.pth.tar'.format(epoch),
+                                    map_location=torch.device('cuda:{}'.format(opts.rank)))
+            state_dict = checkpoint['model_state_dict']
+            state_dict = {k.replace('module.', ''): v for (k, v) in state_dict.items()}
+            model.load_state_dict(state_dict)
 
     # 2. forward the whole test dataset & calculate performance
     model.eval()
@@ -107,7 +109,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_path', type=str, default='./saves')
     parser.add_argument('--save_file_name', type=str, default='alexnet')
     parser.add_argument('--rank', type=int, default=0)
-    parser.add_argument('--gpu_ids', nargs="+", default=[0])
+    parser.add_argument('--gpu_ids', nargs="+", default=['0'])
     opts = parser.parse_args()
     print(opts)
 
