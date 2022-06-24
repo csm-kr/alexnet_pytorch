@@ -31,13 +31,14 @@ def test_and_evaluate(epoch, vis, test_loader, model, criterion, opts, is_load=T
     if is_load:
         if isinstance(model, (torch.nn.parallel.distributed.DistributedDataParallel, torch.nn.DataParallel)):
             checkpoint = torch.load(f=os.path.join(opts.save_path, opts.save_file_name) + '.{}.pth.tar'.format(epoch),
-                                    map_location=torch.device('cuda:{}'.format(opts.rank)))
+                                    map_location=torch.device('cuda:{}'.format(opts.gpu_ids[opts.rank])))
+                                    # map_location=torch.device('cuda:{}'.format(opts.rank)))
             state_dict = checkpoint['model_state_dict']
             model.load_state_dict(state_dict)
 
         else:
             checkpoint = torch.load(f=os.path.join(opts.save_path, opts.save_file_name) + '.{}.pth.tar'.format(epoch),
-                                    map_location=torch.device('cuda:{}'.format(opts.rank)))
+                                    map_location=torch.device('cuda:{}'.format(opts.gpu_ids[opts.rank])))
             state_dict = checkpoint['model_state_dict']
             state_dict = {k.replace('module.', ''): v for (k, v) in state_dict.items()}
             model.load_state_dict(state_dict)

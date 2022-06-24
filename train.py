@@ -8,6 +8,8 @@ def train_one_epoch(epoch, vis, train_loader, model, optimizer, criterion, sched
 
     model.train()
     tic = time.time()
+    train_loader.dataset.transform.transforms[3].set_alpha()
+    print("change alpha to ", train_loader.dataset.transform.transforms[3].alpha)
 
     for i, (images, labels) in enumerate(train_loader):
 
