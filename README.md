@@ -2,26 +2,15 @@
 
 :octocat: re-implementation of alexnet  
 
-
-# results
-- Imagenet
-
-|model       | # parameters      | Flops              | Resolution | top-1 Acc | top-5 Acc | top-1 Err | top-5 Err | epoch |
-|------------|-------------------| ------------------ | ---------- | --------- |-----------|-----------| ----------|-------| 
-|alexnet     | -                 | -                  | 224 x 224  | 56.522    | 79.066    | -         | -         |  -    |
-|alexnet     | -                 | -                  | 224 x 224  | 55.654    | 78.608    | -         | -         |  _    |
-|alexnet(paper)     | -   
-
 ### comparision with torchvision implementations    
 
 experiments torchvision pretrained params of imagenet classification in ubuntu
 
 ### Environments
 
-- Python 3.7
-- pytorch == 1.9.0+cu111 
-- torchvision == 0.10.0+cu111 
-- torchaudio == 0.9.0 
+- Python 3.8
+- pytorch == 1.10.2 
+- torchvision == 0.11.3 
 
 ### Experiment via torchvision pretrained params at validation set
 
@@ -39,16 +28,16 @@ https://pytorch.org/vision/stable/models.html
 
 Imagenet
 
-|model       | # parameters      | Flops              | Resolution | top-1 Acc | top-5 Acc | top-1 Err | top-5 Err | epoch |
-|------------|-------------------| ------------------ | ---------- | --------- |-----------|-----------| ----------|-------| 
-|alexnet     | -                 | -                  | 224 x 224  | 56.522    | 79.066    | -         | -         |  -    |
-|alexnet     | -                 | -                  | 224 x 224  | 55.654    | 78.608    | -         | -         |  _    |
-|alexnet(paper)     | -                 | -                  | 224 x 224  | 55.654    | 78.608    | -         | -         |  _    |
+|model                 | # parameters      | Flops              | Resolution | top-1 Acc | top-5 Acc | top-1 Err | top-5 Err | epoch |
+|----------------------|-------------------| ------------------ | ---------- | --------- |-----------|-----------| ----------|-------| 
+|alexnet (paper)       | -                 | -                  | 224 x 224  | 56.522    | 79.066    | -         | -         |  -    |
+|alexnet (torchvision) | 61100840          | 714691904          | 224 x 224  | 56.516    | 79.070    | -         | -         |  _    |
+|alexnet (this-repo)   | 61100840          | 714691904          | 224 x 224  | 55.940    | 78.894    | -         | -         |  72   |
 
 ### training options
 
 - batch : 128
-- scheduler : step LR / ReduceLROnPlateau
+- scheduler : step LR
 - loss : cross-entropy
 - dataset : imagenet ~(138M)
 - epoch : 90
