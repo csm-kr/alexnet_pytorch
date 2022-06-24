@@ -64,7 +64,8 @@ class AlexNet(nn.Module):
 if __name__ == '__main__':
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     batch_size = 1
-    input = torch.randn([batch_size, 3, 224, 224]).to(device)
+    # input = torch.randn([batch_size, 3, 224, 224]).to(device)
+    input = torch.randn([batch_size, 3, 32, 32]).to(device)
     model = AlexNet().to(device)
     macs, params = profile(model, inputs=(input,))
     print("#params", sum([x.numel() for x in model.parameters()]))
