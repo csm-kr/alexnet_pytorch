@@ -10,8 +10,9 @@ def train_one_epoch(epoch, vis, train_loader, model, optimizer, criterion, sched
     tic = time.time()
 
     for i, (images, labels) in enumerate(train_loader):
-        images = images.to(opts.gpu_ids[opts.rank])
-        labels = labels.to(opts.gpu_ids[opts.rank])
+
+        images = images.to(int(opts.gpu_ids[opts.rank]))
+        labels = labels.to(int(opts.gpu_ids[opts.rank]))
         outputs = model(images)
 
         # ----------- update -----------
@@ -31,7 +32,7 @@ def train_one_epoch(epoch, vis, train_loader, model, optimizer, criterion, sched
         if (i % opts.vis_step == 0 or i == len(train_loader) - 1) and opts.rank == 0:
             print('Epoch [{0}/{1}], Iter [{2}/{3}], Loss: {4:.4f}, LR: {5:.5f}, Time: {6:.2f}'.format(epoch,
                                                                                                       opts.epoch, i,
-                                                                                                      len(train_loader) // opts.batch_size,
+                                                                                                      len(train_loader),
                                                                                                       loss.item(),
                                                                                                       lr,
                                                                                                       toc - tic))
@@ -52,9 +53,9 @@ def train_one_epoch(epoch, vis, train_loader, model, optimizer, criterion, sched
                 os.mkdir(opts.save_path)
 
             checkpoint = {'epoch': epoch,
-                          'model_state_dict': model.state_dict(),
+                          'model_state_dict': model.module.state_dict(),
                           'optimizer_state_dict': optimizer.state_dict(),
                           'scheduler_state_dict': scheduler.state_dict()}
 
             torch.save(checkpoint, os.path.join(opts.save_path, opts.save_file_name + '.{}.pth.tar'.format(epoch)))
-            print("")
+            print("save .pth")

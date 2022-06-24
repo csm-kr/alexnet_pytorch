@@ -39,7 +39,7 @@ def get_args_parser():
     parser.add_argument('--world_size', type=int, default=0)
     parser.add_argument('--port', type=int, default=2022)
     parser.add_argument('--root', type=str, default='/home/cvmlserver7/Sungmin/data/imagenet')
-    parser.add_argument('--start_epoch', type=int, default=73)
+    parser.add_argument('--start_epoch', type=int, default=0)
     parser.add_argument('--weight_decay', type=float, default=5e-4)
     parser.add_argument('--momentum', type=float, default=0.9)
 
@@ -116,6 +116,7 @@ def main_worker(rank, opts):
     # 7. optimizer
     optimizer = torch.optim.SGD(params=model.parameters(),
                                 lr=opts.lr,
+                                weight_decay=opts.weight_decay,
                                 momentum=opts.momentum)
 
     # 8. scheduler
@@ -124,16 +125,14 @@ def main_worker(rank, opts):
                        gamma=0.1)
 
     if opts.start_epoch != 0:
-
         checkpoint = torch.load(os.path.join(opts.save_path, opts.save_file_name) + '.{}.pth.tar'
                                 .format(opts.start_epoch - 1),
                                 map_location=torch.device('cuda:{}'.format(local_gpu_id)))
         # 하나 적은걸 가져와서 train
         model.load_state_dict(checkpoint['model_state_dict'])          # load model state dict
-        print(model)
-
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])  # load optim state dict
         scheduler.load_state_dict(checkpoint['scheduler_state_dict'])  # load sched state dict
+
         if opts.rank == 0:
             print('\nLoaded checkpoint from epoch %d.\n' % (int(opts.start_epoch) - 1))
 

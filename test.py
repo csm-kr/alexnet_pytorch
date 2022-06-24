@@ -107,7 +107,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_path', type=str, default='./saves')
     parser.add_argument('--save_file_name', type=str, default='alexnet')
     parser.add_argument('--rank', type=int, default=0)
-    parser.add_argument('--gpu_ids', nargs="+", default=['0'])
+    parser.add_argument('--gpu_ids', nargs="+", default=[0])
     opts = parser.parse_args()
     print(opts)
 
@@ -134,6 +134,8 @@ if __name__ == '__main__':
                       model=model,
                       criterion=criterion,
                       opts=opts)
+
+
 
 
 

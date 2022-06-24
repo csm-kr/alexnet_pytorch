@@ -30,9 +30,9 @@ Imagenet
 
 |model                 | # parameters      | Flops              | Resolution | top-1 Acc | top-5 Acc | top-1 Err | top-5 Err | epoch |
 |----------------------|-------------------| ------------------ | ---------- | --------- |-----------|-----------| ----------|-------| 
-|alexnet (paper)       | -                 | -                  | 224 x 224  | 56.522    | 79.066    | -         | -         |  -    |
-|alexnet (torchvision) | 61100840          | 714691904          | 224 x 224  | 56.516    | 79.070    | -         | -         |  _    |
-|alexnet (this-repo)   | 61100840          | 714691904          | 224 x 224  | 55.940    | 78.894    | -         | -         |  72   |
+|alexnet (paper)       | -                 | -                  | 224 x 224  | 56.522    | 79.066    | 38.1      | 16.4      |  -    |
+|alexnet (torchvision) | 61100840          | 714691904          | 224 x 224  | 56.516    | 79.070    | 43.484    | 20.93     |  _    |
+|alexnet (this-repo)   | 61100840          | 714691904          | 224 x 224  | 55.940    | 78.894    | 44.060    | 21.106    |  72   |
 
 ### training options
 
@@ -57,8 +57,9 @@ Imagenet
 
     1. RandomResizedCrop()
     2. RandomHorizontalFlip()
-    3. ToTensor()
-    4. normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    3. PCANoisePIL()
+    4. ToTensor()
+    5. normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     
     for testing
     
