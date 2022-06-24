@@ -46,16 +46,16 @@ def train_one_epoch(epoch, vis, train_loader, model, optimizer, criterion, sched
                                title='loss',
                                legend=['total_loss']))
 
-        # save pth file
-        if opts.rank == 0:
+    # save pth file
+    if opts.rank == 0:
 
-            if not os.path.exists(opts.save_path):
-                os.mkdir(opts.save_path)
+        if not os.path.exists(opts.save_path):
+            os.mkdir(opts.save_path)
 
-            checkpoint = {'epoch': epoch,
-                          'model_state_dict': model.module.state_dict(),
-                          'optimizer_state_dict': optimizer.state_dict(),
-                          'scheduler_state_dict': scheduler.state_dict()}
+        checkpoint = {'epoch': epoch,
+                      'model_state_dict': model.state_dict(),
+                      'optimizer_state_dict': optimizer.state_dict(),
+                      'scheduler_state_dict': scheduler.state_dict()}
 
-            torch.save(checkpoint, os.path.join(opts.save_path, opts.save_file_name + '.{}.pth.tar'.format(epoch)))
-            print("save .pth")
+        torch.save(checkpoint, os.path.join(opts.save_path, opts.save_file_name + '.{}.pth.tar'.format(epoch)))
+        print("save .pth")
