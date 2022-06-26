@@ -12,6 +12,11 @@ experiments torchvision pretrained params of imagenet classification in ubuntu
 - pytorch 
 - torchvision 
 
+### requirements
+
+- onnx (pip install)
+- thop (pip install)
+
 ### Experiment via torchvision pretrained params at validation set
 
 test_torchvision.py 
