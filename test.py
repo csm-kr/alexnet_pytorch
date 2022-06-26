@@ -27,6 +27,9 @@ def test_and_evaluate(epoch, vis, test_loader, model, criterion, opts, is_load=T
     2. forward the whole test dataset
     3. calculate loss and accuracy
     """
+
+    print('Validation of epoch [{}]'.format(epoch))
+
     # 1. load pth.tar
     if is_load:
         if isinstance(model, (torch.nn.parallel.distributed.DistributedDataParallel, torch.nn.DataParallel)):
@@ -77,36 +80,39 @@ def test_and_evaluate(epoch, vis, test_loader, model, criterion, opts, is_load=T
 
             correct_top5 += correct_k.item()
 
-            print("step : {} / {}".format(idx + 1, len(test_loader.dataset) / int(label.size(0))))
-            print("top-1 percentage :  {0:0.3f}%".format(correct_top1 / total * 100))
-            print("top-5 percentage :  {0:0.3f}%".format(correct_top5 / total * 100))
-            print("--------------------------------------------------------------")
-            print("top-1 error    :  {0:0.3f}%".format((1 - correct_top1 / total) * 100))
-            print("top-5 error    :  {0:0.3f}%".format((1 - correct_top5 / total) * 100))
-            print("")
+            if opts.rank == 0:
+                print("step : {} / {}".format(idx + 1, len(test_loader.dataset) / int(label.size(0))))
+                print("top-1 percentage :  {0:0.3f}%".format(correct_top1 / total * 100))
+                print("top-5 percentage :  {0:0.3f}%".format(correct_top5 / total * 100))
+                print("--------------------------------------------------------------")
+                print("top-1 error    :  {0:0.3f}%".format((1 - correct_top1 / total) * 100))
+                print("top-5 error    :  {0:0.3f}%".format((1 - correct_top5 / total) * 100))
+                print("")
 
         accuracy_top1 = correct_top1 / total
         accuracy_top5 = correct_top5 / total
         val_avg_loss = val_avg_loss / len(test_loader)  # make mean loss
 
-        if vis is not None:
-            vis.line(X=torch.ones((1, 3)) * epoch,
-                     Y=torch.Tensor([accuracy_top1, accuracy_top5, val_avg_loss]).unsqueeze(0),
-                     update='append',
-                     win='test_loss_acc',
-                     opts=dict(x_label='epoch',
-                               y_label='test_loss and acc',
-                               title='test_loss and accuracy',
-                               legend=['accuracy_top1', 'accuracy_top5', 'avg_loss']))
-        print("")
-        print("top-1 percentage :  {0:0.3f}%".format(correct_top1 / total * 100))
-        print("top-5 percentage :  {0:0.3f}%".format(correct_top5 / total * 100))
+        if opts.rank == 0:
+            if vis is not None:
+                vis.line(X=torch.ones((1, 3)) * epoch,
+                         Y=torch.Tensor([accuracy_top1, accuracy_top5, val_avg_loss]).unsqueeze(0),
+                         update='append',
+                         win='test_loss_acc',
+                         opts=dict(x_label='epoch',
+                                   y_label='test_loss and acc',
+                                   title='test_loss and accuracy',
+                                   legend=['accuracy_top1', 'accuracy_top5', 'avg_loss']))
+            print("")
+            print("top-1 percentage :  {0:0.3f}%".format(correct_top1 / total * 100))
+            print("top-5 percentage :  {0:0.3f}%".format(correct_top5 / total * 100))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--root', type=str, default='/home/cvmlserver7/Sungmin/data/imagenet')
-    parser.add_argument('--epoch', type=int, default=72)
+    # parser.add_argument('--root', type=str, default='/home/cvmlserver7/Sungmin/data/imagenet')
+    parser.add_argument('--root', type=str, default='D:\data\ILSVRC_classification')
+    parser.add_argument('--epoch', type=int, default=62)
     parser.add_argument('--save_path', type=str, default='./saves')
     parser.add_argument('--save_file_name', type=str, default='alexnet')
     parser.add_argument('--rank', type=int, default=0)

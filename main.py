@@ -124,6 +124,7 @@ def main_worker(rank, opts):
                        step_size=30,
                        gamma=0.1)
 
+    # resume
     if opts.start_epoch != 0:
         checkpoint = torch.load(os.path.join(opts.save_path, opts.save_file_name) + '.{}.pth.tar'
                                 .format(opts.start_epoch - 1),
@@ -143,7 +144,7 @@ def main_worker(rank, opts):
         train_one_epoch(epoch, vis, train_loader, model, optimizer, criterion, scheduler, opts)
 
         # 10. test
-        test_and_evaluate(epoch, vis, test_loader, model, criterion, opts)
+        test_and_evaluate(epoch, vis, test_loader, model, criterion, opts, is_load=False)
         scheduler.step()
 
     return 0
